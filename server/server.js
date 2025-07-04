@@ -8,7 +8,7 @@ const User = require("./models/userModel");
 const Url = require("./models/urlModel"); // ✅ New model
 const authRoutes = require("./routes/auth");
 const urlRoutes = require("./routes/url");
-
+const PORT = 3000;
 // MongoDB connection
 mongoose.connect("mongodb+srv://bhavishyachanamolu2004:CejYgpk0LIeFjqUu@url-short-db.bccn4aa.mongodb.net/?retryWrites=true&w=majority&appName=url-short-db");
 
@@ -60,7 +60,7 @@ app.get("/:code", async (req, res) => {
 
 // Serve static files if needed (e.g., frontend build)
 app.use(express.static(path.join(__dirname, "public")));
-const PORT = process.env.PORT || 3000;
+
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
