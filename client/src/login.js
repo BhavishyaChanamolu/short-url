@@ -47,7 +47,7 @@ const AuthPage = () => {
     setToast("");
 
     try {
-      const url = `http://localhost:3000/${mode === "signup" ? "signup" : "login"}`;
+      const url = `https://short-url-backend-rphz.onrender.com/${mode === "signup" ? "signup" : "login"}`;
 
       const res = await fetch(url, {
         method: "POST",
