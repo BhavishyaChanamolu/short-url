@@ -28,7 +28,7 @@ const LandingPage = () => {
       navigate("/login", { replace: true });
     } else {
       setIsLoggedIn(true);
-      fetch("http://localhost:3000/shorten/history", {
+      fetch("https://short-url-backend-rphz.onrender.com/shorten/history", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -57,7 +57,7 @@ const LandingPage = () => {
       return;
     }
 
-    fetch("http://localhost:3000/shorten", {
+    fetch("https://short-url-backend-rphz.onrender.com/shorten", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
