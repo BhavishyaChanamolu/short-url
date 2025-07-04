@@ -13,7 +13,7 @@ const PORT = 3000;
 mongoose.connect("mongodb+srv://bhavishyachanamolu2004:CejYgpk0LIeFjqUu@url-short-db.bccn4aa.mongodb.net/?retryWrites=true&w=majority&appName=url-short-db");
 
 // Allowed frontend origins
-const allowedOrigins = ["http://localhost:3001", "http://localhost:5173"];
+const allowedOrigins = ["https://short-url-frontend-hb0t.onrender.com","http://localhost:3001", "http://localhost:5173"];
 
 app.use(cors({
   origin: function (origin, callback) {
