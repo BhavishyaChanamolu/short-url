@@ -201,7 +201,7 @@ const LandingPage = () => {
               <div className="lp-output-url">
                 🔗 Shortened URL:{' '}
                 <a href={shortUrl} target="_blank" rel="noopener noreferrer">
-                  {shortUrl.replace("http://localhost:3000", "short")}
+                  {shortUrl.replace("https://short-url-frontend-hb0t.onrender.com", "short")}
                 </a>
                 <span className="lp-copy-icon" onClick={() => handleCopy(shortUrl)}>📋</span>
               </div>
