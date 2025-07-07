@@ -3,7 +3,9 @@ import './Landingpage.css';
 import QRCodeCanvas from 'react-qr-code';
 import { FaQrcode } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-// ... [imports remain the same]
+
+const BACKEND_URL = "https://short-url-backend-rphz.onrender.com";
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
@@ -28,15 +30,17 @@ const LandingPage = () => {
       navigate("/login", { replace: true });
     } else {
       setIsLoggedIn(true);
-      fetch("https://short-url-backend-rphz.onrender.com/shorten/history", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      fetch(`${BACKEND_URL}/shorten/history`, {
+        headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => res.json())
         .then(data => {
           if (data.urls) {
-            setHistoryLinks(data.urls);
+            const linksWithFullUrl = data.urls.map(link => ({
+              ...link,
+              shortUrl: `${BACKEND_URL}/${link.shortUrl}`,
+            }));
+            setHistoryLinks(linksWithFullUrl);
           }
         })
         .catch(err => {
@@ -57,7 +61,7 @@ const LandingPage = () => {
       return;
     }
 
-    fetch("https://short-url-backend-rphz.onrender.com/shorten", {
+    fetch(`${BACKEND_URL}/shorten`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,10 +79,11 @@ const LandingPage = () => {
       })
       .then(data => {
         if (data.shortUrl) {
-          setShortUrl(data.shortUrl);
+          const fullShortUrl = `${BACKEND_URL}/${data.shortUrl}`;
+          setShortUrl(fullShortUrl);
           setHistoryLinks(prev => [{
             originalUrl: data.originalUrl,
-            shortUrl: data.shortUrl,
+            shortUrl: fullShortUrl,
             createdAt: data.createdAt
           }, ...prev]);
         } else {
@@ -201,7 +206,7 @@ const LandingPage = () => {
               <div className="lp-output-url">
                 🔗 Shortened URL:{' '}
                 <a href={shortUrl} target="_blank" rel="noopener noreferrer">
-                  {shortUrl.replace("https://short-url-frontend-hb0t.onrender.com", "short")}
+                  {shortUrl.replace(`${BACKEND_URL}/`, "short/")}
                 </a>
                 <span className="lp-copy-icon" onClick={() => handleCopy(shortUrl)}>📋</span>
               </div>
@@ -245,14 +250,13 @@ const LandingPage = () => {
               <div>
                 <strong>Short:</strong>{' '}
                 <a
-  href={link.shortUrl}
-  target="_blank"
-  rel="noreferrer"
-  style={{ color: "white" }}
->
-  {link.shortUrl.replace("http://localhost:3000", "short")}
-</a>
-
+                  href={link.shortUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: "white" }}
+                >
+                  {link.shortUrl.replace(`${BACKEND_URL}/`, "short/")}
+                </a>
                 <span className="lp-copy-icon" onClick={() => handleCopy(link.shortUrl)}>📋</span>
               </div>
               <div className="lp-qr-trigger-inline" onClick={() => setQrVisibility(qrVisibility === index ? null : index)}>
