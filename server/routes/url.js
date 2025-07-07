@@ -4,14 +4,14 @@ const authenticate = require("../middleware/auth");
 const User = require("../models/userModel");
 const Url = require("../models/urlModel");
 
-const bhav = "http://localhost:3000";
+const bhav = "https://short-url-frontend-hb0t.onrender.com";
 router.post("/", authenticate, async (req, res) => {
   const { longUrl, customAlias } = req.body;
 
   if (!longUrl) return res.status(400).json({ error: "Long URL is required" });
 
   const shortCode = customAlias || Math.random().toString(36).substring(2, 8);
-  const shortUrl = `${bhav}/${shortCode}`;
+  const shortUrl = `${shortCode}`;
 
   try {
     const existing = await Url.findOne({ shortUrl });
