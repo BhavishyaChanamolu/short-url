@@ -45,10 +45,9 @@ app.get("/", (req, res) => {
 // 🔁 Redirect route: maps short URLs back to original
 app.get("/:code", async (req, res) => {
   const code = req.params.code;
-  const fullShortUrl = `${short}/${code}`;
 
   try {
-    const urlEntry = await Url.findOne({ shortUrl: fullShortUrl });
+   const urlEntry = await Url.findOne({ shortUrl: code });
     if (!urlEntry) return res.status(404).send("Short URL not found");
 
     return res.redirect(urlEntry.originalUrl);
