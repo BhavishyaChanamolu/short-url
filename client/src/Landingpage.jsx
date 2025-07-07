@@ -27,26 +27,35 @@ const LandingPage = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login", { replace: true });
-    } else {
-      setIsLoggedIn(true);
-      fetch(`${BACKEND_URL}/shorten/history`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.urls) {
-            const linksWithFullUrl = data.urls.map(link => ({
-              ...link,
-              shortUrl: `${BACKEND_URL}/${link.shortUrl}`,
-            }));
-            setHistoryLinks(linksWithFullUrl);
-          }
-        })
-        .catch(err => {
-          console.error("Failed to load history:", err);
-        });
+      setIsLoggedIn(false);
+      return;
     }
+
+    fetch(`${BACKEND_URL}/shorten/history`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => {
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+          return [];
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data.urls) {
+          const linksWithFullUrl = data.urls.map(link => ({
+            ...link,
+            shortUrl: `${BACKEND_URL}/${link.shortUrl}`,
+          }));
+          setHistoryLinks(linksWithFullUrl);
+          setIsLoggedIn(true);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load history:", err);
+        setIsLoggedIn(false);
+      });
   }, [navigate]);
 
   const toggleTheme = () => setDarkMode(!darkMode);
@@ -57,7 +66,6 @@ const LandingPage = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login first to generate short URLs.");
-      navigate("/login", { replace: true });
       return;
     }
 
@@ -71,6 +79,11 @@ const LandingPage = () => {
     })
       .then(res => {
         if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem("token");
+            setIsLoggedIn(false);
+            throw new Error("Token expired or unauthorized. Please login again.");
+          }
           return res.json().then(err => {
             throw new Error(err.error || res.statusText);
           });
