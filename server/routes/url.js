@@ -36,7 +36,6 @@ router.post("/", authenticate, async (req, res) => {
     user.urls.push(newUrl._id);
     await user.save();
 
-    // ✅ FIXED RESPONSE
     return res.status(200).json({
       shortUrl: newUrl.shortUrl,
       originalUrl: newUrl.originalUrl,
@@ -51,8 +50,13 @@ router.post("/", authenticate, async (req, res) => {
 
 router.get("/history", authenticate, async (req, res) => {
   try {
-    const urls = await Url.find({ user: req.user.id }).sort({ createdAt: -1 });
-    res.status(200).json({ urls });
+    const user = await User.findById(req.user.id).populate('urls'); 
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.status(200).json({
+      username: user.username,    
+      urls: user.urls  
+    });
   } catch (err) {
     console.error("Analytics fetch error:", err);
     res.status(500).json({ error: "Failed to fetch URL history" });
