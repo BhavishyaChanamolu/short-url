@@ -3,11 +3,11 @@ import './Landingpage.css';
 import QRCodeCanvas from 'react-qr-code';
 import { FaQrcode } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-
 const BACKEND_URL = "https://short-url-backend-rphz.onrender.com";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [shortUrl, setShortUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
@@ -44,13 +44,15 @@ const LandingPage = () => {
       })
       .then(data => {
         if (data.urls) {
-          const linksWithFullUrl = data.urls.map(link => ({
-            ...link,
-            shortUrl: `${BACKEND_URL}/${link.shortUrl}`,
-          }));
-          setHistoryLinks(linksWithFullUrl);
-          setIsLoggedIn(true);
-        }
+  const linksWithFullUrl = data.urls.map(link => ({
+    ...link,
+    shortUrl: `${BACKEND_URL}/${link.shortUrl}`,
+  }));
+  setHistoryLinks(linksWithFullUrl);
+  setIsLoggedIn(true);
+  if (data.username) setUsername(data.username);
+}
+
       })
       .catch(err => {
         console.error("Failed to load history:", err);
@@ -152,12 +154,15 @@ const LandingPage = () => {
           <nav className="lp-nav-right">
             {!isLoggedIn ? (
               <>
-                <button onClick={() => navigate('/login')} className="lp-nav-btn">Login</button>
-                <button onClick={() => navigate('/signup')} className="lp-nav-btn">SignUp</button>
+                <button onClick={() => navigate('/login')}  className="lp-analytics-btn">Login</button>
+                <button onClick={() => navigate('/signup')}  className="lp-analytics-btn">SignUp</button>
               </>
             ) : (
               <div className="lp-profile-container" onClick={() => setShowProfileDropdown(!showProfileDropdown)}>
-                <span className="lp-profile-icon">👤</span>
+                <span className="lp-profile-icon">
+  {username?.charAt(0)?.toUpperCase() || '👤'}
+</span>
+
                 {showProfileDropdown && (
                   <div className="lp-profile-dropdown">
                     <button
